@@ -18,7 +18,7 @@ from .highlighter import get_saliency, overlay
 
 
 from tensorboard.plugins.agent import Agent
-agent = Agent('/Users/fabian/projects/aicamp/log')  # TODO un-hardcode
+agent = Agent('/Users/andrew/git/rlmonitor/logs2')  # TODO un-hardcode
 
 class Recorder(object):
     
@@ -83,12 +83,48 @@ class Recorder(object):
                     self.n_steps.append(n_step)
                     self.frames.append(last_frame)
                     self.observations.append(ob[None])  # TODO Is None correct here?
-
                 action = self.act.step(ob) # [0]  # TODO check if [0] is correct
 
                 ob, reward, done, _ = self.env.step(action)
                 # ob = ob[None] # extract NumPy array from LazyFrames object
                 episode_reward += reward
+
+                '''
+                Do you want to make this fully generic - so that CNN's processing images can also create visualizations?
+                Ideally, yes
+                So you'd put RL-specific stuff into a meta-data object
+                stepdata = {"reward": reward, "action": action, "frame":frame}
+                metadata = {"Learning rate": lr, "Environment Name": name, "tag": "example tag"}
+                Ops don't need to be in the observe method - they're attached to the model and people may explore them in Agent.
+                operations=agent.Ops(feed={"input1": "deepq/observation", "input2":"deepq_1/obs_t"},
+                                         output={'q_values': 'deepq/q_func/action_value/fully_connected_1/MatMul',
+                                         '2nd_to_last': 'deepq_1/q_func/convnet/Conv_2/Relu'} ),
+                Visualizations will expose keys to what Ops they're looking for from the model (both input/output)
+                In the plugin, there will be a text editor for setting this map. (Also the action/controller map). Saved with the model, can be copied from other models.
+
+                
+                Observations vs Frame data. Look into OpenAI gym on this one.
+                '''
+
+                '''
+                agent.observe(
+                    session=session, # for checkpointing model
+                    meta_data=agent.Meta(env=self.env.name, tag=tag, info={"Blah blah": "blah blah"}),
+                    step_data=agent.Step(frame=last_frame, obs=last_obs, action=action, reward=reward, done=done, info={"Extra Key": "Extra value"})
+                )
+
+                agent.observe(
+                    session=session,
+                    env_name='EnduroNoFrameskip-v4',
+                    tag="Idk",
+                    info = {"something": somethingy},
+                    obs = last_obs,
+                    frame=last_frame,
+                    reward=reward,
+                    action=action[0],
+                    done=done
+                )
+                '''
 
                 agent.update(
                     session=session,
