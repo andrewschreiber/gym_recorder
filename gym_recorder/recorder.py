@@ -18,7 +18,6 @@ from .highlighter import get_saliency, overlay
 
 
 from tensorboard.plugins.agent import Agent
-agent = Agent('/Users/andrew/git/rlmonitor/logs2')  # TODO un-hardcode
 
 class Recorder(object):
     
@@ -56,6 +55,7 @@ class Recorder(object):
         start_time = time.time()
         stop = False
         feed_dict = {}
+        agent = Agent(log_path='/Users/andrew/git/rlmonitor/logs2', skip=100, env_name="", tags=[""], feed_ops)  # TODO un-hardcode
 
         while n_episode< max_episodes:
 
@@ -125,13 +125,21 @@ class Recorder(object):
                     done=done
                 )
                 '''
+                # agent.update(
+                #     session=session,
+                #     env_name="",
+                #     frame=last_frame,
+                #     reward=reward,
+                #     action=action[0],
+                #     done=done
+                # )
 
                 agent.update(
                     session=session,
-                    env_name='EnduroNoFrameskip-v4',
                     frame=last_frame,
                     reward=reward,
                     action=action[0],
+                    n_episode=n_episode,
                     done=done
                 )
 
