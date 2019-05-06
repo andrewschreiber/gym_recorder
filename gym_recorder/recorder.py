@@ -55,7 +55,7 @@ class Recorder(object):
         start_time = time.time()
         stop = False
         feed_dict = {}
-        agent = Agent(log_path='/Users/andrew/git/rlmonitor/logs2', skip=100, env_name="", tags=[""], feed_ops)  # TODO un-hardcode
+        agent = Agent(logdir='/Users/andrew/git/rlmonitor/logs2', skip=100, env_name="", tags=[""], feed_ops=[])  # TODO un-hardcode
 
         while n_episode< max_episodes:
 
